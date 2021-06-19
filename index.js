@@ -61,6 +61,18 @@ app.put("/api/courses/:id", (req, res) => {
   res.send(course);
 });
 
+app.delete("/api/courses/:id", (req, res) => {
+  const course = courses.find((value) => value.id === parseInt(req.params.id));
+  if (!course) {
+    res.status(404).send("not available");
+    return;
+  }
+ 
+  const removeItem = courses.indexOf(course)
+  courses.splice(removeItem,1)
+  res.send(courses);
+})
+
 const validateError = (course) => {
   const schema = {
     name: Joi.string().min(5).required(),
