@@ -1,4 +1,6 @@
 const express = require("express");
+const helmet = require('helmet')
+const morgan = require('morgan')
 const logger = require("./logger");
 const Joi = require("joi");
 
@@ -8,6 +10,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'))
 
 app.use(logger);
+app.use(helmet());
+app.use(morgan('tiny'))
 
 app.use((req, res, next) => {
   console.log("next()");
