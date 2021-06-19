@@ -27,11 +27,15 @@ app.get("/api/courses/:id", (req, res) => {
 });
 
 app.post("/api/courses", (req, res) => {
-  console.log(req.body);
+  if (req.body.name.length < 5 || !req.body.name) {
+    res.status(400).send("must present & min length 5");
+    return;
+  }
   const newCourse = {
     id: courses.length + 1,
     name: req.body.name,
-  }; 
+  };
+  
   courses.push(newCourse);
   res.send(newCourse);
 });
