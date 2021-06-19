@@ -5,13 +5,22 @@ const logger = require("./logger");
 const Joi = require("joi");
 
 const app = express();
+
+console.log(`env: ${process.env.NODE_ENV}` );
+console.log(`auto env get: ${app.get('env')}`);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'))
 
 app.use(logger);
 app.use(helmet());
-app.use(morgan('tiny'))
+
+if(app.get('env')==="development"){
+  app.use(morgan('tiny'))
+  console.log('morgan enable');
+}
+
 
 app.use((req, res, next) => {
   console.log("next()");
