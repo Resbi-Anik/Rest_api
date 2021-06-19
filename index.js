@@ -1,5 +1,6 @@
 const express = require("express");
 const Joi = require("joi");
+const { validate } = require("joi/lib/types/object");
 
 const app = express();
 app.use(express.json());
@@ -27,10 +28,8 @@ app.get("/api/courses/:id", (req, res) => {
 });
 
 app.post("/api/courses", (req, res) => {
-  const schema = {
-    name: Joi.string().length(5).required(),
-  };
-  const {error} = Joi.validate(req.body, schema);
+  
+  const { error } = validateError(req.body)
 
   if (error) {
     res.status(400).send(error.details[0].message);
@@ -45,6 +44,13 @@ app.post("/api/courses", (req, res) => {
   courses.push(newCourse);
   res.send(newCourse);
 });
+
+const validateError = (course) => {
+  const schema = {
+    name: Joi.string().length(5).required(),
+  };
+  return Joi.validate(course, schema);
+};
 
 const port = process.env.PORT || 3000;
 console.log("port", port);
