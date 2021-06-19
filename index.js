@@ -1,7 +1,7 @@
 const express = require("express");
-const helmet = require('helmet')
 const morgan = require('morgan')
 const logger = require("./logger");
+const config = require('config');
 const Joi = require("joi");
 
 const app = express();
@@ -14,7 +14,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'))
 
 app.use(logger);
-app.use(helmet());
+
+console.log(`server type: ${config.get('name')}`); 
+console.log(`mail type: ${config.get('mail.host')}`);
 
 if(app.get('env')==="development"){
   app.use(morgan('tiny'))
