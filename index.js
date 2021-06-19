@@ -1,9 +1,16 @@
 const express = require("express");
+const logger = require("./logger");
 const Joi = require("joi");
-const { validate } = require("joi/lib/types/object");
 
 const app = express();
 app.use(express.json());
+
+app.use(logger);
+
+app.use((req, res, next) => {
+  console.log("next()");
+  next();
+});
 
 const courses = [
   { id: 1, name: "course1" },
@@ -67,11 +74,11 @@ app.delete("/api/courses/:id", (req, res) => {
     res.status(404).send("not available");
     return;
   }
- 
-  const removeItem = courses.indexOf(course)
-  courses.splice(removeItem,1)
+
+  const removeItem = courses.indexOf(course);
+  courses.splice(removeItem, 1);
   res.send(courses);
-})
+});
 
 const validateError = (course) => {
   const schema = {
