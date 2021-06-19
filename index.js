@@ -30,10 +30,10 @@ app.post("/api/courses", (req, res) => {
   const schema = {
     name: Joi.string().length(5).required(),
   };
-  const result = Joi.validate(req.body, schema);
+  const {error} = Joi.validate(req.body, schema);
 
-  if (result.error) {
-    res.status(400).send("must present && length should be maximum 4");
+  if (error) {
+    res.status(400).send(error.details[0].message);
     return;
   }
 
