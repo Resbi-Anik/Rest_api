@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/courses", (req, res) => {
-  res.send([1, 2, 3]);
+  res.send(courses);
 });
 
 app.get("/api/courses/:id", (req, res) => {
@@ -28,8 +28,7 @@ app.get("/api/courses/:id", (req, res) => {
 });
 
 app.post("/api/courses", (req, res) => {
-  
-  const { error } = validateError(req.body)
+  const { error } = validateError(req.body);
 
   if (error) {
     res.status(400).send(error.details[0].message);
@@ -45,9 +44,26 @@ app.post("/api/courses", (req, res) => {
   res.send(newCourse);
 });
 
+app.put("/api/courses/:id", (req, res) => {
+  const course = courses.find((value) => value.id === parseInt(req.params.id));
+  if (!course) {
+    res.status(404).send("not available");
+    return;
+  }
+
+  const { error } = validateError(req.body);
+
+  if (error) {
+    res.status(400).send(error.details[0].message);
+    return;
+  }
+  course.name = req.body.name;
+  res.send(course);
+});
+
 const validateError = (course) => {
   const schema = {
-    name: Joi.string().length(5).required(),
+    name: Joi.string().min(5).required(),
   };
   return Joi.validate(course, schema);
 };
