@@ -17,6 +17,7 @@ app.use(logger);
 
 console.log(`server type: ${config.get('name')}`); 
 console.log(`mail type: ${config.get('mail.host')}`);
+console.log(`app password: ${config.get('password')}`);
 
 if(app.get('env')==="development"){
   app.use(morgan('tiny'))
