@@ -3,6 +3,7 @@ const morgan = require('morgan')
 const logger = require("./logger");
 const config = require('config');
 const Joi = require("joi");
+const cons = require("consolidate")
 
 const app = express();
 
@@ -15,9 +16,17 @@ app.use(express.static('public'))
 
 app.use(logger);
 
+//config 
 console.log(`server type: ${config.get('name')}`); 
 console.log(`mail type: ${config.get('mail.host')}`);
 console.log(`app password: ${config.get('password')}`);
+
+//template engine
+app.engine('html', cons.mustache);
+
+app.set("view engine", "html")
+
+app.set('views', './views');
 
 if(app.get('env')==="development"){
   app.use(morgan('tiny'))
@@ -36,7 +45,9 @@ const courses = [
 ];
 
 app.get("/", (req, res) => {
-  res.send("rest api");
+  // res.send("rest api");
+  var viewdata = { 'test' : 'Hey now.'};
+  res.render('index', viewdata);
 });
 
 app.get("/api/courses", (req, res) => {
