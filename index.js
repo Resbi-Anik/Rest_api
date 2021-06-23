@@ -17,7 +17,7 @@
 // console.log('user value is:', user);
 // console.log('after');
 
-// using promise
+// using async await
 
 const getUser = (value) =>{
   return new Promise((resolve, reject)=>{
@@ -29,9 +29,12 @@ const getUser = (value) =>{
 }
 
 console.log('before');
-const user=getUser(1)
-.then(value=>console.log('user value is:', value))
+async function getValuesFromUser(){
+    const user= await getUser(1)
+    console.log('user values is:', user);
+}
+getValuesFromUser()
+
+
 console.log('after');
 
-const err_values= Promise.reject(new Error('error to get value'))
-err_values.catch(err=> console.log(err))
