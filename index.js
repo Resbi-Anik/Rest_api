@@ -1,15 +1,33 @@
-const express = require("express");
+//without callback return value can't be shown
+//output:{
+// before
+// reading a user
+// user value is: undefined
+// after}
 
-const app = express();
+// const getUser = (value) =>{
+//   console.log('reading a user');
+//   setTimeout(()=>{
+//    return({user_value: value});
+//   },2000)
+// }
 
-app.get("/", (req, res) => {
-  res.send("rest api");
-});
+// console.log('before');
+// const user=getUser(1)
+// console.log('user value is:', user);
+// console.log('after');
 
-app.get("/api/courses", (req, res) => {
-  res.send([1, 2, 3]);
-});
+// using callback
 
-app.listen(3000, () => {
-  console.log("listening at port 3000");
-});
+const getUser = (value, callback) =>{
+  console.log('reading a user');
+  setTimeout(()=>{
+   callback({user_value: value});
+  },2000)
+}
+
+console.log('before');
+const user=getUser(1,(user)=>{
+    console.log('user value is:', user);
+})
+console.log('after');
