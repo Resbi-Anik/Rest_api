@@ -1,15 +1,18 @@
-const express = require("express");
+//sync
 
-const app = express();
+console.log('course1');
+console.log('course2');
+console.log('course3');
+console.log('course4');
 
-app.get("/", (req, res) => {
-  res.send("rest api");
-});
+//async
 
-app.get("/api/courses", (req, res) => {
-  res.send([1, 2, 3]);
-});
+console.log('course1');
+setTimeout(()=>{
+  console.log('course2');
+},2000)
+console.log('course3');
+console.log('course4');
 
-app.listen(3000, () => {
-  console.log("listening at port 3000");
-});
+
+
