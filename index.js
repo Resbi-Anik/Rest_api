@@ -1,67 +1,60 @@
-const express = require("express");
-
-const app = express();
 const mongoose = require("mongoose");
 
 mongoose
-  .connect("mongodb://localhost/mongo-exercises")
-  .then(() => console.log("connect"))
-  .catch((err) => console.log("error -->", err));
+  .connect("mongodb://localhost/mongoose-relationship")
+  .then(() => console.log("Connected to MongoDB...2"))
+  .catch((err) => console.error("Could not connect to MongoDB...", err));
 
-app.get("/", (request, response) => {
-  response.send("working");
-});
+const Author = mongoose.model(
+  "Author",
+  new mongoose.Schema({
+    name: String,
+    bio: String,
+    website: String,
+  })
+);
 
-const CourseSchema = new mongoose.Schema({
-  tags: Array,
-  date: Date,
-  // name: { type: String, required: true },
-  name: {
-    type: String,
-    validate: {
-      isAsync: true,
-      validator: async function (v) {
-        setTimeout(() => {
-          const result = (await v) && v >= 3;
-          return result;
-        }, 3000);
-      },
-      message: `A course should have at least 1 tag.`,
+const Course = mongoose.model(
+  "Course",
+  new mongoose.Schema({
+    name: String,
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Author",
     },
-  },
-  author: String,
-  isPublished: Boolean,
-  price: Number,
-});
+  })
+);
 
-const Course = mongoose.model("Course", CourseSchema);
-const createCourse = async () => {
+async function createAuthor(name, bio, website) {
+  const author = new Author({
+    name,
+    bio,
+    website,
+  });
+
+  const result = await author.save();
+  console.log(result);
+}
+
+async function createCourse(name, author) {
   const course = new Course({
-    name: "An",
-    title: "express learning2",
-    courseType: "expert leve2",
-    welcome: false,
-    price: 25,
+    name,
+    author,
   });
 
   const result = await course.save();
-  console.log("res-->", result);
-};
+  console.log(result);
+}
 
-const getCourses = async () => {
-  const course1 = await Course.find({
-    name: "React Course",
-  }).sort({ name: 1 });
-  console.log("Get course:", course1.length);
-  // course1.map((value, index)=>{
-  //   console.log(value.name, value.author);
-  // })
-};
+async function listCourses() {
+  const courses = await Course.find()
+  .populate('author')
+  .select("name author");
+  console.log(courses);
+}
 
-// getCourses();
+// createAuthor('Anik', 'My bio', 'My Website');
 
-createCourse();
+// createCourse('Node Course2', '6144d6008d3cad0578f4651c')
 
-app.listen(3000, () => {
-  console.log("listening2");
-});
+listCourses();
