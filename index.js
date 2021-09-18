@@ -2,39 +2,27 @@ const mongoose = require("mongoose");
 
 mongoose
   .connect("mongodb://localhost/mongoose-relationship")
-  .then(() => console.log("Connected to MongoDB...2"))
+  .then(() => console.log("Connected to MongoDB..."))
   .catch((err) => console.error("Could not connect to MongoDB...", err));
 
-const Author = mongoose.model(
-  "Author",
-  new mongoose.Schema({
-    name: String,
-    bio: String,
-    website: String,
-  })
-);
+const authorSchema = new mongoose.Schema({
+  name: String,
+  bio: String,
+  website: String,
+});
+
+const Author = mongoose.model("Author", authorSchema);
 
 const Course = mongoose.model(
   "Course",
   new mongoose.Schema({
     name: String,
     author: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Author",
+      type: [authorSchema],
+      required: true,
     },
   })
 );
-
-async function createAuthor(name, bio, website) {
-  const author = new Author({
-    name,
-    bio,
-    website,
-  });
-
-  const result = await author.save();
-  console.log(result);
-}
 
 async function createCourse(name, author) {
   const course = new Course({
@@ -47,14 +35,41 @@ async function createCourse(name, author) {
 }
 
 async function listCourses() {
-  const courses = await Course.find()
-  .populate('author')
-  .select("name author");
+  const courses = await Course.find();
   console.log(courses);
 }
 
-// createAuthor('Anik', 'My bio', 'My Website');
+const updateCourseAuthor = async (courseId) => {
+  const course = await Course.update(
+    { _id: courseId },
+    {
+      $set: {
+        "author.name": "Mosh",
+      },
+    }
+  );
 
-// createCourse('Node Course2', '6144d6008d3cad0578f4651c')
+  console.log("course", Course);
+};
 
-listCourses();
+const addAuthor = async (authorId) => {
+  const course = await Course.findById(authorId);
+  course.author.push({ name: "new One" });
+  course.save();
+  console.log(course);
+};
+
+const removeAuthor = async (courseId, authorId) => {
+  const course = await Course.findById(courseId);
+  const removeOne = course.author.filter((courseAuthorId) => {
+    return courseAuthorId.name !== authorId;
+  });
+  course.author = removeOne;
+  course.save();
+  console.log("removeOne", removeOne);
+};
+
+// addAuthor("61459a701369352a847df2d4");
+removeAuthor("61459a701369352a847df2d4", "Mosh");
+// updateCourseAuthor("61457f1b5b70022a481c1a52");
+// createCourse("Node Course", [new Author({ name: "Mosh" }),new Author({ name: "Anik" })]);
